@@ -42,8 +42,9 @@ port ( clk            : in std_logic;
      );
 end component;
 
-    signal pixel_clk, serialize_clk, serialize_clk_n, blank_sig: std_logic;
-	 signal h_sync_sig, v_sync_sig, v_completed_sig: std_logic;
+    signal pixel_clk, serialize_clk, serialize_clk_n, blank_sig, blank_sig1, blank_sig2: std_logic;
+	 signal h_sync_sig, v_sync_sig, v_completed_sig, h_sync_sig1, h_sync_sig2, v_sync_sig_1, 
+			  v_sync_sig_2: std_logic;
 	 signal red, green, blue : std_logic_vector (7 downto 0);
 	 signal red_s, green_s, blue_s, clock_s : std_logic;
 	 signal row_sig, column_sig : unsigned(10 downto 0);
@@ -91,7 +92,7 @@ inst_vga_sync: vga_sync
 inst_character_gen: character_gen
 port map(
 		 clk	=> pixel_clk,
-       blank => blank_sig,
+       blank => blank_sig2,
        row => std_logic_vector(row_sig),
        column => std_logic_vector(column_sig),
        ascii_to_write => "01000001",
@@ -100,6 +101,59 @@ port map(
 		 g => green,
 		 b => blue
      );
+	  
+--------------------------Let there be delays!----------------------------------
+
+--blank flip flop one
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			blank_sig1 <= blank_sig;
+		end if;
+end process;
+
+--blank flip flop two
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			blank_sig2 <= blank_sig1;
+		end if;
+end process;
+
+--h sync flip flop one
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			h_sync_sig_1 <= h_sync_sig;
+		end if;
+end process;
+
+--h sync flip flop two
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			h_sync_sig_2 <= h_sync_sig_1;
+		end if;
+end process;
+
+--v sync flip flop one
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			v_sync_sig_1 <= v_sync_sig;
+		end if;
+end process;
+
+--v sync flip flop two
+process (pixel_clk) is
+	begin
+		if rising_edge(pixel_clk) then
+			v_sync_sig_2 <= v_sync_sig_1;
+		end if;
+end process;
+
+-----------------------------------------------------------
+
 
     -- Convert VGA signals to HDMI (actually, DVID ... but close enough)
     inst_dvid: entity work.dvid
@@ -110,9 +164,9 @@ port map(
                 red_p => red,
                 green_p => green,
                 blue_p => blue,
-                blank => blank_sig,
-                hsync => h_sync_sig,
-                vsync => v_sync_sig,
+                blank => blank_sig2,
+                hsync => h_sync_sig_2,
+                vsync => v_sync_sig_2,
                 -- outputs to TMDS drivers
                 red_s => red_s,
                 green_s => green_s,
