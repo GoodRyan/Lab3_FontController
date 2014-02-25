@@ -132,9 +132,14 @@ with column_flip_flop_two select mux_out <= data_sig(0) when "000",
 --output
 process(blank, mux_out)
 begin
+
+r <= (others => '0');
+g <= (others => '0');
+b <= (others => '0');
+
 if(blank = '0') then
 	if(mux_out = '1') then
-		r <= "11111111";
+		r <= (others => '1');
 	end if;
 end if;
 end process;
