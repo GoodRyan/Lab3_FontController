@@ -63,7 +63,7 @@ end component;
 signal data_out_b_sig : std_logic_vector(7 downto 0);
 signal row_flip_flop	 : std_logic_vector(3 downto 0);
 signal addr_sig		 : std_logic_vector(10 downto 0);
-signal address_b_sig	 : std_logic_vector(11 downto 0);
+signal address_b_sig	 : std_logic_vector(13 downto 0);
 signal data_sig		 : std_logic_vector(7 downto 0);
 signal column_flip_flop_one, column_flip_flop_two : std_logic_vector(2 downto 0);
 signal mux_out			 : std_logic;
@@ -77,7 +77,7 @@ char_screen_buffer_init: char_screen_buffer
     clk => clk,
 	 we => write_en,
 	 address_a => "000000000000",
-	 address_b => address_b_sig,
+	 address_b => address_b_sig(11 downto 0),
 	 data_in => ascii_to_write,
 	 data_out_a => open,
 	 data_out_b =>	data_out_b_sig
@@ -101,7 +101,7 @@ process (clk) is
       end if;
 end process;
 
-addr_sig <= data_out_b_sig & row_flip_flop;
+addr_sig <= data_out_b_sig(6 downto 0) & row_flip_flop(3 downto 0);
 
 --first column flip flop
 process (clk) is
