@@ -130,7 +130,14 @@ with column_flip_flop_two select mux_out <= data_sig(0) when "000",
 														  data_sig(7) when "111";
 														  
 --output
-r <= "11111111" when mux_out = '1';
+process(blank, mux_out)
+begin
+if(blank = '0') then
+	if(mux_out = '1') then
+		r <= "11111111";
+	end if;
+end if;
+end process;
 			
 
 --create address signal
