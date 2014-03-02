@@ -78,7 +78,7 @@ char_screen_buffer_init: char_screen_buffer
   port map(
     clk => clk,
 	 we => write_en,
-	 address_a => "000000000000",
+	 address_a => std_logic_vector(count),
 	 address_b => address_b_sig(11 downto 0),
 	 data_in => ascii_to_write,
 	 data_out_a => open,
