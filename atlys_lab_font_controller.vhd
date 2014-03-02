@@ -6,13 +6,13 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity atlys_lab_font_controller is
     port (
-             clk : in std_logic; -- 100 MHz
-             reset : in std_logic;
-				 up : in std_logic;
-				 down : in std_logic;
-				 speed_switch: in std_logic;
-             tmds : out std_logic_vector(3 downto 0);
-             tmdsb : out std_logic_vector(3 downto 0)
+             clk    : in  std_logic; -- 100 MHz
+             reset  : in  std_logic;
+             start  : in  std_logic;
+             switch : in  std_logic_vector(7 downto 0);
+             led    : out std_logic_vector(7 downto 0);
+             tmds   : out std_logic_vector(3 downto 0);
+             tmdsb  : out std_logic_vector(3 downto 0)
     );
 end atlys_lab_font_controller;
 
@@ -38,12 +38,29 @@ port ( clk            : in std_logic;
        column         : in std_logic_vector(10 downto 0);
        ascii_to_write : in std_logic_vector(7 downto 0);
        write_en       : in std_logic;
+		 reset			 : in std_logic;
        r,g,b          : out std_logic_vector(7 downto 0)
      );
 end component;
 
-    signal pixel_clk, serialize_clk, serialize_clk_n, blank_sig, blank_sig1, blank_sig2: std_logic;
-	 signal h_sync_sig, v_sync_sig, v_completed_sig, h_sync_sig1, h_sync_sig2, v_sync_sig_1, 
+component font_rom
+	port( clk: in std_logic;
+			addr: in std_logic_vector(10 downto 0);
+			data: out std_logic_vector(7 downto 0)
+		 );
+end component;
+
+component button_pressed
+	port(
+		clk         : in std_logic;
+      reset       : in std_logic;
+		button_in	: in std_logic;
+		button_out	: out std_logic
+		);
+end component;
+
+    signal pixel_clk, serialize_clk, serialize_clk_n, blank_sig, blank_sig1, blank_sig2, enable_sig: std_logic;
+	 signal h_sync_sig, v_sync_sig, v_completed_sig, h_sync_sig_1, h_sync_sig_2, v_sync_sig_1, 
 			  v_sync_sig_2: std_logic;
 	 signal red, green, blue : std_logic_vector (7 downto 0);
 	 signal red_s, green_s, blue_s, clock_s : std_logic;
@@ -95,12 +112,21 @@ port map(
        blank => blank_sig2,
        row => std_logic_vector(row_sig),
        column => std_logic_vector(column_sig),
-       ascii_to_write => "01000001",
-       write_en => '1',
+       ascii_to_write => switch,
+       write_en => enable_sig,
+		 reset	=> reset,
        r => red,
 		 g => green,
 		 b => blue
      );
+	  
+button_pressed_init: button_pressed
+port map(
+		clk	=> pixel_clk,
+      reset => reset,     
+		button_in	=> start,
+		button_out	=> enable_sig
+	);
 	  
 --------------------------Let there be delays!----------------------------------
 

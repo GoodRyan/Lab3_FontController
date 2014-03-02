@@ -36,6 +36,7 @@ port ( clk            : in std_logic;
        column         : in std_logic_vector(10 downto 0);
        ascii_to_write : in std_logic_vector(7 downto 0);
        write_en       : in std_logic;
+		 reset			 : in std_logic;
        r,g,b          : out std_logic_vector(7 downto 0)
      );
 end character_gen;
@@ -67,6 +68,7 @@ signal address_b_sig	 : std_logic_vector(13 downto 0);
 signal data_sig		 : std_logic_vector(7 downto 0);
 signal column_flip_flop_one, column_flip_flop_two : std_logic_vector(2 downto 0);
 signal mux_out			 : std_logic;
+signal count, count_next : unsigned(11 downto 0);
 
 begin
 
@@ -143,6 +145,11 @@ if(blank = '0') then
 	end if;
 end if;
 end process;
+
+--counter
+count_next <= (others => '0') when reset = '1' else count;
+
+count <= count_next + 1 when write_en = '1' else count_next;
 			
 
 --create address signal
