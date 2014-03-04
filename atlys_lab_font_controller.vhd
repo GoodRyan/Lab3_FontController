@@ -1,3 +1,16 @@
+----------------------------------------------------------------------------------
+-- Company: USAFA
+-- Engineer: Ryan Good
+-- 
+-- Create Date:    20:00:26 01/30/2014 
+-- Design Name: 	 font_controller
+-- Module Name:    atlys_lab_font_controller
+-- Project Name: 	 font_controller
+-- Target Devices: VGA monitors
+-- Tool versions: N/A
+-- Description: Displays various ASCII letters on the screen as desired by the
+-- customer.
+----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;

@@ -88,7 +88,7 @@ char_screen_buffer_init: char_screen_buffer
 font_rom_init: font_rom
 	port map(
 		clk => clk,
-		addr => addr_sig,
+		addr => data_out_b_sig(6 downto 0) & row_flip_flop(3 downto 0),
 		data => data_sig
 	);
 	
